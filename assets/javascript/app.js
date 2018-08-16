@@ -14,7 +14,10 @@ function displayActorInfo() {
         method: "GET"
     }).then(function (response) {
 
+
         var results = response.data;
+
+
         for (var i = 0; i < results.length; i++) {
             var gifDiv = $("<div class='item'>");
 
@@ -23,8 +26,12 @@ function displayActorInfo() {
             var p = $("<p>").text("Rating: " + rating);
 
             var personImage = $("<img>");
-            personImage.attr("src", results[i].images.fixed_height.url);
-            personImage.addClass("gif")
+            personImage.attr("src", results[i].images.fixed_height_still.url);
+            personImage.attr("data-animate", results[i].images.fixed_height.url);
+            personImage.attr("data-still", results[i].images.fixed_height_still.url);
+            personImage.attr("data-state", "still")
+            personImage.addClass("gif");
+
 
             gifDiv.prepend(p);
             gifDiv.prepend(personImage);
@@ -84,17 +91,19 @@ renderButtons();
 
 // ==========================================================================
 
-$(".gif").on("click", function () {
+$("body").on("click", ".gif", function () {
     var state = $(this).attr("data-state");
-
-    var stillImageSrc = $(this).attr("data-still");
-    var animateImageSrc = $(this).attr("data-animate");
-
+    // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+    // Then, set the image's data-state to animate
+    // Else set src to the data-still value
     if (state === "still") {
+        $(this).attr("src", $(this).attr("data-animate"));
         $(this).attr("data-state", "animate");
-        $(this).attr("src", animateImageSrc)
     } else {
+        $(this).attr("src", $(this).attr("data-still"));
         $(this).attr("data-state", "still");
-        $(this).attr("src", stillImageSrc);
     }
-});
+
+})
+
+
